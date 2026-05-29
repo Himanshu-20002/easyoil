@@ -1,11 +1,17 @@
-import NextAuth, { NextAuthConfig } from 'next-auth';
+import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { dbConnect } from './db';
 import { User } from '../models/User';
+import { authConfig } from './auth.config';
 
-export const authConfig: NextAuthConfig = {
-  trustHost: true,
+/**
+ * Full auth configuration with database-backed Credentials provider.
+ * This extends the edge-compatible auth.config.ts with the actual
+ * provider logic that requires Node.js runtime (mongoose, bcrypt).
+ */
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -43,34 +49,5 @@ export const authConfig: NextAuthConfig = {
         };
       }
     })
-  ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
-        token.companyRef = user.companyRef;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-        session.user.companyRef = token.companyRef as string | null;
-      }
-      return session;
-    }
-  },
-  pages: {
-    signIn: '/login',
-    error: '/login'
-  },
-  session: {
-    strategy: 'jwt',
-    maxAge: 24 * 60 * 60 // 24 hours
-  },
-  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET
-};
-
-export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
+  ]
+});
