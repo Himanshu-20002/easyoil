@@ -1,4 +1,9 @@
 import mongoose from 'mongoose';
+import { User } from '../models/User';
+import { Company } from '../models/Company';
+import { Application } from '../models/Application';
+import { Document } from '../models/Document';
+import { ActivityLog } from '../models/ActivityLog';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/easyoil';
 
@@ -28,6 +33,9 @@ if (!global.mongoose) {
 }
 
 export async function dbConnect() {
+  // Prevent bundler tree-shaking and guarantee model registration
+  const _models = { User, Company, Application, Document, ActivityLog };
+
   if (cached.conn) {
     return cached.conn;
   }

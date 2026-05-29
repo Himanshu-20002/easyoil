@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '../../../../lib/auth';
 import { dbConnect } from '../../../../lib/db';
 import { Application } from '../../../../models/Application';
+import { Company } from '../../../../models/Company';
 import { User } from '../../../../models/User';
 import { Document } from '../../../../models/Document';
 import { ActivityLog } from '../../../../models/ActivityLog';

@@ -5,6 +5,7 @@ import { dbConnect } from './db';
 import { User } from '../models/User';
 
 export const authConfig: NextAuthConfig = {
+  trustHost: true,
   providers: [
     CredentialsProvider({
       name: 'Credentials',

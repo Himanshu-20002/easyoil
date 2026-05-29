@@ -9,7 +9,7 @@ import { Fuel, Lock, Mail, ArrowRight, ShieldCheck, HelpCircle } from 'lucide-re
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '';
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,6 +27,38 @@ function LoginForm() {
     }
   }, [searchParams]);
 
+  const performLogin = async (emailStr: string, passwordStr: string) => {
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const result = await signIn('credentials', {
+        email: emailStr.toLowerCase(),
+        password: passwordStr,
+        redirect: false
+      });
+
+      if (result?.error) {
+        setError('Invalid credentials or inactive account.');
+        setLoading(false);
+        return false;
+      }
+
+      setSuccess('Successfully authenticated! Routing to workspace...');
+      const redirectTo = callbackUrl === '/login' ? '/' : callbackUrl;
+      setTimeout(() => {
+        router.push(redirectTo);
+        router.refresh();
+      }, 1000);
+      return true;
+    } catch (err: any) {
+      setError('An error occurred during login. Please try again.');
+      setLoading(false);
+      return false;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
@@ -34,40 +66,14 @@ function LoginForm() {
       return;
     }
 
-    setLoading(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      const result = await signIn('credentials', {
-        email: email.toLowerCase(),
-        password,
-        redirect: false
-      });
-
-      if (result?.error) {
-        setError('Invalid credentials or inactive account.');
-        setLoading(false);
-        return;
-      }
-
-      setSuccess('Successfully authenticated! Routing to portal...');
-      
-      // Let's determine where to redirect depending on user role or let middleware handle it
-      // To be responsive, we can fetch the user details or simply route to '/' and let the middleware redirect!
-      setTimeout(() => {
-        router.push(callbackUrl || '/');
-        router.refresh();
-      }, 1000);
-    } catch (err: any) {
-      setError('An error occurred during login. Please try again.');
-      setLoading(false);
-    }
+    await performLogin(email, password);
   };
 
-  const handleQuickLogin = (emailStr: string) => {
+  const handleQuickLogin = async (emailStr: string) => {
+    const seededPassword = 'iocl1234';
     setEmail(emailStr);
-    setPassword('iocl1234');
+    setPassword(seededPassword);
+    await performLogin(emailStr, seededPassword);
   };
 
   return (
@@ -161,29 +167,31 @@ function LoginForm() {
             </button>
           </form>
 
-          {/* Quick Demo Login Credentials Panel (Only in development) */}
-          {process.env.NODE_ENV === 'development' && (
-            <div className="mt-8 border-t border-slate-700/60 pt-6">
-              <div className="flex items-center gap-1.5 mb-3 text-slate-300">
-                <HelpCircle className="w-4.5 h-4.5 text-iocl-orange" />
-                <span className="text-xs font-bold uppercase tracking-wider">Developer Quick-Login Accounts</span>
-              </div>
+          {/* Demo Login Credentials Panel (BETA seeded accounts) */}
+          <div className="mt-8 border-t border-slate-700/60 pt-6">
+            <div className="flex items-center gap-1.5 mb-3 text-slate-300">
+              <HelpCircle className="w-4.5 h-4.5 text-iocl-orange" />
+              <span className="text-xs font-bold uppercase tracking-wider">BETA Seeded Login Credentials — click to auto-login</span>
+            </div>
               
               <div className="space-y-2">
                 <div className="flex flex-wrap gap-1.5">
                   <button
+                    type="button"
                     onClick={() => handleQuickLogin('admin@easyoil.in')}
                     className="px-2.5 py-1 bg-red-950/40 hover:bg-red-950/60 text-red-300 border border-red-900/60 text-[10px] font-bold rounded-lg transition-colors"
                   >
                     Admin: admin@easyoil.in
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleQuickLogin('officer1@easyoil.in')}
                     className="px-2.5 py-1 bg-blue-950/40 hover:bg-blue-950/60 text-blue-300 border border-blue-900/60 text-[10px] font-bold rounded-lg transition-colors"
                   >
                     Officer 1: officer1@easyoil.in
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleQuickLogin('customerC@chromapolymers.com')}
                     className="px-2.5 py-1 bg-green-950/40 hover:bg-green-950/60 text-green-300 border border-green-900/60 text-[10px] font-bold rounded-lg transition-colors"
                   >
@@ -195,7 +203,6 @@ function LoginForm() {
                 </p>
               </div>
             </div>
-          )}
 
         </div>
       </div>

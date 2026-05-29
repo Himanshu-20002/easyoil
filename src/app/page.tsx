@@ -92,6 +92,7 @@ export default function Home() {
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-iocl-orange text-xs font-bold uppercase tracking-wider">
                 <span className="flex h-2 w-2 rounded-full bg-iocl-orange animate-pulse"></span>
                 EasyOil B2B e-Onboarding Portal
+                <span className="inline-flex items-center rounded-full bg-amber-500/15 text-amber-300 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border border-amber-500/20">BETA</span>
               </div>
               
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.1] text-white">
@@ -125,13 +126,14 @@ export default function Home() {
                       href="/login"
                       className="flex justify-center items-center gap-2 py-4 px-8 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-200 font-extrabold text-sm transition-all"
                     >
-                      Access Member Portal
+                      Existing Member 
                     </Link>
                   </>
                 )}
               </div>
-
-              {/* Status & Trust Badges */}
+              <p className="mt-4 text-sm text-amber-200 font-medium max-w-xl leading-relaxed">
+                This platform is currently in <strong>BETA</strong>. Some workflows are in testing mode and seeded access is recommended.
+              </p>
               <div className="pt-8 border-t border-slate-900/60 grid grid-cols-3 gap-6 max-w-md">
                 <div>
                   <div className="text-2xl font-black text-white">100%</div>
