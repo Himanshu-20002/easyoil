@@ -46,7 +46,23 @@ function LoginForm() {
       }
 
       setSuccess('Successfully authenticated! Routing to workspace...');
-      const redirectTo = callbackUrl === '/login' ? '/' : callbackUrl;
+      
+      // Fetch session dynamically to redirect straight to their respective dashboard
+      const sessionRes = await fetch('/api/auth/session');
+      const session = await sessionRes.json();
+      
+      let redirectTo = callbackUrl;
+      if (!redirectTo || redirectTo === '/' || redirectTo === '/login') {
+        const role = session?.user?.role;
+        if (role === 'admin') {
+          redirectTo = '/admin/dashboard';
+        } else if (role === 'sales_officer') {
+          redirectTo = '/officer/dashboard';
+        } else {
+          redirectTo = '/customer/dashboard';
+        }
+      }
+
       setTimeout(() => {
         router.push(redirectTo);
         router.refresh();
