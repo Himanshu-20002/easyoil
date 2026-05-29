@@ -55,15 +55,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // 3. GST format validation (15-char alphanumeric)
-    // Relaxed slightly to allow any alphanumeric character at the 14th position (traditionally Z but can vary)
-    const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[0-9A-Z]{1}[0-9A-Z]{1}$/;
-    if (!gstRegex.test(gst)) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid GST Number format. Must be a valid 15-character Indian GSTIN.' },
-        { status: 400 }
-      );
-    }
+    // 3. GST format validation (removed as requested)
 
     // 4. PAN format validation (10-char alphanumeric if provided)
     if (pan) {
