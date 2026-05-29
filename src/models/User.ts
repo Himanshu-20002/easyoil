@@ -1,0 +1,20 @@
+import { Schema, model, models } from 'mongoose';
+
+const UserSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true, index: true },
+    mobile: { type: String, required: true },
+    role: { 
+      type: String, 
+      enum: ['customer', 'sales_officer', 'admin'], 
+      default: 'customer' 
+    },
+    password: { type: String, required: true }, // Hashed
+    companyRef: { type: Schema.Types.ObjectId, ref: 'Company', default: null },
+    isActive: { type: Boolean, default: true }
+  },
+  { timestamps: true }
+);
+
+export const User = models.User || model('User', UserSchema);
