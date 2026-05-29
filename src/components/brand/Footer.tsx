@@ -23,7 +23,7 @@ export function Footer() {
               </div>
               <div>
                 <span className="font-extrabold text-lg tracking-tight text-white block leading-none">EasyOil</span>
-                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Enterprise Portal</span>
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Onboarding Portal</span>
               </div>
             </div>
             
@@ -72,12 +72,12 @@ export function Footer() {
                 <Mail className="w-4 h-4 text-iocl-orange shrink-0" />
                 <span>helpdesk.b2b@easyoil.in</span>
               </div>
-              <div className="flex items-center gap-3">
+              {/* <div className="flex items-center gap-3">
                 <MapPin className="w-4.5 h-4.5 text-iocl-orange shrink-0" />
                 <span className="text-slate-500 font-semibold leading-normal">
                   EasyOil Corporation Limited, Bandra East, Mumbai - 400051.
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
 

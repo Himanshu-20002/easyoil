@@ -96,7 +96,7 @@ export default function Home() {
               
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.1] text-white">
                 Direct & Reliable <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-iocl-blue to-blue-400">Bulk Fuel</span> Onboarding
+                <span className="  text-orange-400">Bulk Fuel</span> Onboarding
               </h1>
               
               <p className="text-base sm:text-lg text-slate-400 font-medium max-w-xl leading-relaxed">

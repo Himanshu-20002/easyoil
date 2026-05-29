@@ -40,7 +40,7 @@ export function Header() {
     <header className="sticky top-0 z-40 w-full bg-slate-950/95 backdrop-blur-xl border-b border-slate-800/80 shadow-[0_18px_60px_rgba(15,23,42,0.55)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-iocl-orange to-orange-600 flex items-center justify-center text-white shadow-lg shadow-orange-500/20">
+          <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/20">
             <Fuel className="w-6 h-6" />
           </div>
           <div>
