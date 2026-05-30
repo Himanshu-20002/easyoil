@@ -43,7 +43,10 @@ export async function dbConnect() {
   if (cached.conn) {
     try {
       // Verify connection is still alive
-      await cached.conn.connection.db.admin().ping();
+      const db = cached.conn?.connection?.db;
+      if (db) {
+        await db.admin().ping();
+      }
       return cached.conn;
     } catch (e) {
       // Connection is stale, reset it
