@@ -7,6 +7,14 @@ import { Application } from '../../../models/Application';
 
 export async function POST(req: Request) {
   try {
+    // Verify MongoDB connection is available before proceeding
+    if (!process.env.MONGODB_URI) {
+      return NextResponse.json(
+        { success: false, message: 'Database configuration error. Please contact support.' },
+        { status: 500 }
+      );
+    }
+
     await dbConnect();
     const body = await req.json();
 

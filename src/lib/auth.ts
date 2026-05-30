@@ -24,29 +24,39 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        await dbConnect();
-        const user = await User.findOne({ email: credentials.email.toString().toLowerCase() });
-        
-        if (!user || !user.isActive) {
+        try {
+          await dbConnect();
+          const email = credentials.email.toString().toLowerCase().trim();
+          const user = await User.findOne({ email });
+          
+          if (!user) {
+            return null;
+          }
+          
+          if (!user.isActive) {
+            return null;
+          }
+
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password.toString(),
+            user.password
+          );
+
+          if (!isPasswordValid) {
+            return null;
+          }
+
+          return {
+            id: user._id.toString(),
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            companyRef: user.companyRef ? user.companyRef.toString() : null
+          };
+        } catch (error: any) {
+          console.error('Authorization error:', error?.message);
           return null;
         }
-
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password.toString(),
-          user.password
-        );
-
-        if (!isPasswordValid) {
-          return null;
-        }
-
-        return {
-          id: user._id.toString(),
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          companyRef: user.companyRef ? user.companyRef.toString() : null
-        };
       }
     })
   ]
