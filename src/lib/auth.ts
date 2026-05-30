@@ -3,6 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { dbConnect } from './db';
 import { User } from '../models/User';
+import { Company } from '../models/Company';
 import { authConfig } from './auth.config';
 
 /**
