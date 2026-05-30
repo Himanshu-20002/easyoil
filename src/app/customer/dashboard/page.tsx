@@ -161,7 +161,9 @@ export default function CustomerDashboard() {
 
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
         {/* Status Display banner */}
-        {application && getStatusBanner(application.status)}
+        <div className="relative z-10">
+          {application && getStatusBanner(application.status)}
+        </div>
 
         {/* Workspace Hub Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-10">
@@ -176,7 +178,7 @@ export default function CustomerDashboard() {
               {application?.status === 'draft' || application?.status === 'correction_required' ? (
                 <Link
                   href="/customer/apply"
-                  className="text-xs text-iocl-orange font-extrabold hover:underline flex items-center gap-1"
+                  className="text-xs text-orange-600 hover:text-white hover:bg-orange-600 bg-orange-600/10 border border-orange-600/20 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all shadow-sm"
                 >
                   <Edit3 className="w-3.5 h-3.5" /> Modify Info
                 </Link>
