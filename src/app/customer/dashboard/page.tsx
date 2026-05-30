@@ -84,29 +84,33 @@ export default function CustomerDashboard() {
         );
       case 'submitted':
         return (
-          <div className="bg-iocl-blue text-white p-6 sm:p-8 rounded-3xl shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <span className="text-xs bg-blue-800 text-white font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">Under Verification</span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold mt-3">Application Received Successfully</h2>
-              <p className="text-xs font-semibold text-blue-100 mt-2">EasyOil Sales Officers are actively verifying uploaded files. Track details below.</p>
-            </div>
-            <div className="bg-blue-800 px-6 py-3 rounded-2xl text-center">
-              <span className="text-[10px] text-blue-200 uppercase tracking-widest font-bold">Review Status</span>
-              <p className="text-lg font-extrabold uppercase mt-0.5">Submitted</p>
+          <div className="bg-white border border-slate-200 rounded-3xl shadow-lg overflow-hidden">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 p-6">
+              <div className="flex-1 min-w-0">
+                <span className="inline-flex items-center rounded-full bg-blue-100 text-blue-900 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em]">Under Verification</span>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-4">Application Received Successfully</h2>
+                <p className="text-sm leading-6 text-slate-600 mt-3 max-w-2xl">Sales Officers are actively verifying uploaded files. You’ll receive a clear status update once verification completes.</p>
+              </div>
+              <div className="rounded-3xl bg-slate-900 px-6 py-5 text-center min-w-[170px]">
+                <span className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Review Status</span>
+                <p className="text-2xl font-extrabold uppercase text-white mt-2 tracking-[0.08em]">Submitted</p>
+              </div>
             </div>
           </div>
         );
       case 'under_review':
         return (
-          <div className="bg-sky-600 text-white p-6 sm:p-8 rounded-3xl shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <span className="text-xs bg-sky-800 text-white font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">Under Active Review</span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold mt-3">Officer Review in Progress</h2>
-              <p className="text-xs font-semibold text-sky-100 mt-2">Your documentation is currently under verification by the designated Sales Officer.</p>
-            </div>
-            <div className="bg-sky-800 px-6 py-3 rounded-2xl text-center">
-              <span className="text-[10px] text-sky-200 tracking-widest font-bold">Review Status</span>
-              <p className="text-lg font-extrabold uppercase mt-0.5">Under Review</p>
+          <div className="bg-white border border-slate-200 rounded-3xl shadow-lg overflow-hidden">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 p-6">
+              <div className="flex-1 min-w-0">
+                <span className="inline-flex items-center rounded-full bg-sky-100 text-sky-900 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em]">Active Review</span>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-4">Officer Review In Progress</h2>
+                <p className="text-sm leading-6 text-slate-600 mt-3 max-w-2xl">Your documentation is currently being verified by the assigned Sales Officer. We will update the status as soon as review is complete.</p>
+              </div>
+              <div className="rounded-3xl bg-slate-900 px-6 py-5 text-center min-w-[170px]">
+                <span className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Review Status</span>
+                <p className="text-2xl font-extrabold uppercase text-white mt-2 tracking-[0.08em]">Under Review</p>
+              </div>
             </div>
           </div>
         );
@@ -201,8 +205,12 @@ export default function CustomerDashboard() {
                 <p className="text-slate-800 text-sm font-bold mt-0.5">{company?.contactPerson}</p>
               </div>
               <div>
-                <p className="text-slate-400 font-bold uppercase tracking-wider">Official Email / Mobile</p>
-                <p className="text-slate-800 text-sm font-bold mt-0.5">{company?.email} / {company?.mobile}</p>
+                <p className="text-slate-400 font-bold uppercase tracking-wider">Official Email</p>
+                <p className="text-slate-800 text-sm font-bold mt-0.5">{company?.email}</p>
+              </div>
+              <div>
+                <p className="text-slate-400 font-bold uppercase tracking-wider">Mobile</p>
+                <p className="text-slate-800 text-sm font-bold mt-0.5">{company?.mobile}</p>
               </div>
               <div className="sm:col-span-2">
                 <p className="text-slate-400 font-bold uppercase tracking-wider">Office Address</p>
@@ -221,16 +229,24 @@ export default function CustomerDashboard() {
                 <div>
                   <p className="text-slate-400 font-bold uppercase tracking-wider">Target Fuel Category</p>
                   <p className="text-slate-800 text-sm font-bold mt-0.5">
-                    {application?.productType === 'HSD' ? 'High Speed Diesel (HSD)' : application?.productType === 'LDO' ? 'Light Diesel Oil (LDO)' : 'Bitumen'}
+                    {application?.productType
+                      ? application.productType === 'HSD'
+                        ? 'High Speed Diesel (HSD)'
+                        : application.productType === 'LDO'
+                          ? 'Light Diesel Oil (LDO)'
+                          : application.productType === 'Bitumen'
+                      : 'Not specified'}
                   </p>
                 </div>
                 <div>
                   <p className="text-slate-400 font-bold uppercase tracking-wider">Monthly Required Volume</p>
-                  <p className="text-slate-800 text-sm font-bold mt-0.5">{Number(application?.quantity).toLocaleString()} Litres/MT</p>
+                  <p className="text-slate-800 text-sm font-bold mt-0.5">
+                    {application?.quantity ? `${Number(application.quantity).toLocaleString()} Litres/MT` : 'Not specified'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-slate-400 font-bold uppercase tracking-wider">Delivery Facility Location</p>
-                  <p className="text-slate-800 text-sm font-bold mt-0.5">{application?.location || 'Depot'}</p>
+                  <p className="text-slate-800 text-sm font-bold mt-0.5">{application?.location || 'Not specified'}</p>
                 </div>
                 <div>
                   <p className="text-slate-400 font-bold uppercase tracking-wider">Requirement Commences</p>

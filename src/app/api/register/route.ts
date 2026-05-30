@@ -123,11 +123,6 @@ export async function POST(req: Request) {
     await Application.create({
       applicationId,
       companyRef: company._id,
-      productType: 'HSD', // default
-      quantity: 1000,     // default
-      location: address,  // default
-      storageAvailability: false,
-      requirementStartDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
       status: 'draft'
     });
 

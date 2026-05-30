@@ -32,7 +32,7 @@ export async function GET() {
     let application = await Application.findOne({ companyRef: companyId }).sort({ updatedAt: -1 });
 
     if (!application) {
-      // Create one on the fly as backup
+      // Create one on the fly as a minimal empty draft
       const year = new Date().getFullYear();
       const randomNum = Math.floor(10000 + Math.random() * 90000);
       const applicationId = `IOCL-${year}-${randomNum}`;
@@ -40,11 +40,6 @@ export async function GET() {
       application = await Application.create({
         applicationId,
         companyRef: companyId,
-        productType: 'HSD',
-        quantity: 1000,
-        location: company?.address || 'Mumbai Depot',
-        storageAvailability: false,
-        requirementStartDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         status: 'draft'
       });
     }

@@ -38,8 +38,8 @@ export default function Apply() {
     contactPerson: '',
     mobile: '',
     email: '',
-    productType: 'HSD',
-    quantity: 1000,
+    productType: '',
+    quantity: '',
     location: '',
     storageAvailability: false,
     existingSupplier: '',
@@ -76,9 +76,9 @@ export default function Apply() {
             mobile: data.company.mobile || '',
             email: data.company.email || '',
             // Logistics
-            productType: data.application?.productType || 'HSD',
-            quantity: data.application?.quantity || 1000,
-            location: data.application?.location || data.company.address || '',
+            productType: data.application?.productType || '',
+            quantity: data.application?.quantity ?? '',
+            location: data.application?.location || '',
             storageAvailability: data.application?.storageAvailability ?? false,
             existingSupplier: data.application?.existingSupplier || '',
             requirementStartDate: data.application?.requirementStartDate 
@@ -173,7 +173,7 @@ export default function Apply() {
         if (!formData.companyName || !formData.gst || !formData.pan || !formData.address) {
           throw new Error('Please complete Step 1: Legal Profile before submitting');
         }
-        if (!formData.location || !formData.requirementStartDate) {
+        if (!formData.productType || !formData.quantity || Number(formData.quantity) <= 0 || !formData.location || !formData.requirementStartDate) {
           throw new Error('Please complete Step 2: Logistics details before submitting');
         }
         
@@ -221,7 +221,7 @@ export default function Apply() {
   const getDocStatusBadge = (fileType: string) => {
     const doc = uploadedDocs.find(d => d.fileType === fileType);
     if (!doc) return <span className="text-[10px] bg-slate-100 text-slate-400 font-semibold px-2 py-0.5 rounded">Not Uploaded</span>;
-    
+
     switch (doc.verificationStatus) {
       case 'verified':
         return <span className="text-[10px] bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded flex items-center gap-0.5 w-fit"><Check className="w-3 h-3" /> Verified</span>;
@@ -233,11 +233,26 @@ export default function Apply() {
           </div>
         );
       default:
-        return <span className="text-[10px] bg-amber-100 text-amber-700 font-semibold px-2 py-0.5 rounded">Pending Review</span>;
+        return (
+          <div className="flex flex-col items-start gap-1">
+            <span className="text-[10px] bg-sky-100 text-sky-700 font-bold px-2 py-0.5 rounded flex items-center gap-1 w-fit"><Check className="w-3 h-3" /> Uploaded</span>
+            <span className="text-[10px] text-slate-500">Pending review</span>
+          </div>
+        );
     }
   };
 
+  const getUploadButtonLabel = (fileType: string) => {
+    return uploadedDocs.some(d => d.fileType === fileType) ? 'Replace file' : 'Upload PDF/PNG';
+  };
+
+  const getDocFileName = (fileType: string) => {
+    return uploadedDocs.find(d => d.fileType === fileType)?.fileName || '';
+  };
+
   const isLocked = applicationStatus !== 'draft' && applicationStatus !== 'correction_required';
+  const submitButtonLabel = applicationStatus === 'correction_required' ? 'Update & Reapply' : 'Lock & Submit Application';
+  const uploadedCount = uploadedDocs.length;
 
   if (loading) {
     return (
@@ -268,38 +283,61 @@ export default function Apply() {
 
         {/* Correction Remarks Banner */}
         {applicationStatus === 'correction_required' && remarks.length > 0 && (
-          <div className="mb-6 bg-red-50 border border-red-300 text-red-800 p-4 rounded-2xl">
+          <div className="mb-6 bg-blue-50 border border-blue-200 text-slate-900 p-4 rounded-2xl">
             <div className="flex items-center gap-2 mb-2">
-              <ShieldAlert className="w-5 h-5 text-red-600" />
-              <h4 className="font-extrabold text-sm uppercase tracking-wider text-red-900">Correction Requested by Sales Officer</h4>
+              <ShieldAlert className="w-5 h-5 text-blue-600" />
+              <h4 className="font-extrabold text-sm uppercase tracking-wider text-blue-900">Correction Requested by Sales Officer</h4>
             </div>
-            <div className="text-xs font-semibold bg-white p-3 rounded-xl border border-red-100 text-slate-700">
+            <div className="text-xs font-semibold bg-white p-3 rounded-xl border border-blue-100 text-slate-700">
               <p className="font-bold text-slate-900 mb-1">{remarks[remarks.length - 1].authorName}:</p>
               <p className="italic">&ldquo;{remarks[remarks.length - 1].text}&rdquo;</p>
             </div>
+            <p className="text-[11px] text-slate-600 mt-3">Please update the required fields or re-upload your documents, then click <strong>Update &amp; Reapply</strong> on the final step.</p>
           </div>
         )}
 
         {/* Wizard Progress Steps */}
-        <div className="mb-8 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-wrap justify-between items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all ${step === 1 ? 'bg-iocl-blue text-white iocl-glow-blue' : 'bg-slate-100 text-slate-600'}`}>1</div>
-            <span className={`text-xs font-bold ${step === 1 ? 'text-iocl-blue' : 'text-slate-500'}`}>Legal Profile</span>
-          </div>
-          <div className="w-8 h-px bg-slate-200 hidden md:block"></div>
-          <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all ${step === 2 ? 'bg-iocl-blue text-white iocl-glow-blue' : 'bg-slate-100 text-slate-600'}`}>2</div>
-            <span className={`text-xs font-bold ${step === 2 ? 'text-iocl-blue' : 'text-slate-500'}`}>Logistics Details</span>
-          </div>
-          <div className="w-8 h-px bg-slate-200 hidden md:block"></div>
-          <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all ${step === 3 ? 'bg-iocl-blue text-white iocl-glow-blue' : 'bg-slate-100 text-slate-600'}`}>3</div>
-            <span className={`text-xs font-bold ${step === 3 ? 'text-iocl-blue' : 'text-slate-500'}`}>Compliance Uploads</span>
-          </div>
-          <div className="w-8 h-px bg-slate-200 hidden md:block"></div>
-          <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all ${step === 4 ? 'bg-iocl-blue text-white iocl-glow-blue' : 'bg-slate-100 text-slate-600'}`}>4</div>
-            <span className={`text-xs font-bold ${step === 4 ? 'text-iocl-blue' : 'text-slate-500'}`}>Review & Submit</span>
+        <div className="mb-8 bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className={`rounded-3xl border px-4 py-3 ${step === 1 ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/20' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-full grid place-items-center font-bold text-sm ${step === 1 ? 'bg-white text-blue-600' : 'bg-slate-200 text-slate-600'}`}>1</div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.24em] font-semibold">Step 1</p>
+                  <p className="text-sm font-bold">Legal Profile</p>
+                </div>
+              </div>
+            </div>
+            <div className={`rounded-3xl border px-4 py-3 ${step === 2 ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/20' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-full grid place-items-center font-bold text-sm ${step === 2 ? 'bg-white text-blue-600' : 'bg-slate-200 text-slate-600'}`}>2</div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.24em] font-semibold">Step 2</p>
+                  <p className="text-sm font-bold">Logistics Details</p>
+                </div>
+              </div>
+            </div>
+            <div className={`rounded-3xl border px-4 py-3 ${step === 3 ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/20' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-full grid place-items-center font-bold text-sm ${step === 3 ? 'bg-white text-blue-600' : 'bg-slate-200 text-slate-600'}`}>3</div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.24em] font-semibold">Step 3</p>
+                  <p className="text-sm font-bold">Compliance Uploads</p>
+                </div>
+              </div>
+              <div className="mt-3 flex flex-col gap-1 items-center justify-center">
+                <span className={`text-[10px] uppercase tracking-[0.24em] font-semibold ${step === 3 ? 'text-blue-100' : 'text-slate-500'}`}>{uploadedCount}/3 uploaded</span>
+              </div>
+            </div>
+            <div className={`rounded-3xl border px-4 py-3 ${step === 4 ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/20' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-full grid place-items-center font-bold text-sm ${step === 4 ? 'bg-white text-blue-600' : 'bg-slate-200 text-slate-600'}`}>4</div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.24em] font-semibold">Step 4</p>
+                  <p className="text-sm font-bold">Review & Submit</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -466,6 +504,7 @@ export default function Apply() {
                     onChange={handleChange}
                     className="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-iocl-blue focus:border-transparent text-sm font-medium text-slate-800 disabled:bg-slate-100"
                   >
+                    <option value="" disabled>Select Fuel Category</option>
                     <option value="HSD">High Speed Diesel (HSD)</option>
                     <option value="LDO">Light Diesel Oil (LDO)</option>
                     <option value="Bitumen">Bitumen</option>
@@ -560,18 +599,25 @@ export default function Apply() {
                     <p className="text-[11px] text-slate-500 font-medium mt-1">Duly signed letter on official company letterhead detailing fuel requirements, monthly demands, and key stakeholders.</p>
                     <div className="mt-2">{getDocStatusBadge('request_letter')}</div>
                   </div>
-                  <div>
+                  <div className="flex flex-col items-end gap-2">
                     {!isLocked ? (
-                      <label className="flex items-center justify-center gap-1.5 px-4 py-2 border border-dashed border-iocl-blue text-iocl-blue hover:bg-iocl-blue/5 rounded-xl cursor-pointer text-xs font-bold transition-colors">
-                        <UploadCloud className="w-4 h-4" />
-                        Upload PDF/PNG
-                        <input
-                          type="file"
-                          accept=".pdf,.png,.jpg,.jpeg"
-                          onChange={(e) => handleFileUpload(e, 'request_letter')}
-                          className="hidden"
-                        />
-                      </label>
+                      <>
+                        <label className="flex items-center justify-center gap-2 px-4 py-2 border border-slate-300 bg-white text-slate-900 hover:bg-slate-100 rounded-xl cursor-pointer text-xs font-bold transition-colors shadow-sm">
+                          <UploadCloud className="w-4 h-4" />
+                          {getUploadButtonLabel('request_letter')}
+                          <input
+                            type="file"
+                            accept=".pdf,.png,.jpg,.jpeg"
+                            onChange={(e) => handleFileUpload(e, 'request_letter')}
+                            className="hidden"
+                          />
+                        </label>
+                        {getDocFileName('request_letter') ? (
+                          <p className="text-[11px] text-slate-500 italic">Uploaded file: {getDocFileName('request_letter')}</p>
+                        ) : (
+                          <p className="text-[11px] text-slate-500 italic">Accepted formats: PDF, PNG</p>
+                        )}
+                      </>
                     ) : (
                       <span className="text-xs font-bold text-slate-400">Edits Locked</span>
                     )}
@@ -585,18 +631,25 @@ export default function Apply() {
                     <p className="text-[11px] text-slate-500 font-medium mt-1">Scanned official copy of GST certificate showing corporate legal registration details.</p>
                     <div className="mt-2">{getDocStatusBadge('gst_certificate')}</div>
                   </div>
-                  <div>
+                  <div className="flex flex-col items-end gap-2">
                     {!isLocked ? (
-                      <label className="flex items-center justify-center gap-1.5 px-4 py-2 border border-dashed border-iocl-blue text-iocl-blue hover:bg-iocl-blue/5 rounded-xl cursor-pointer text-xs font-bold transition-colors">
-                        <UploadCloud className="w-4 h-4" />
-                        Upload PDF/PNG
-                        <input
-                          type="file"
-                          accept=".pdf,.png,.jpg,.jpeg"
-                          onChange={(e) => handleFileUpload(e, 'gst_certificate')}
-                          className="hidden"
-                        />
-                      </label>
+                      <>
+                        <label className="flex items-center justify-center gap-2 px-4 py-2 border border-slate-300 bg-white text-slate-900 hover:bg-slate-100 rounded-xl cursor-pointer text-xs font-bold transition-colors shadow-sm">
+                          <UploadCloud className="w-4 h-4" />
+                          {getUploadButtonLabel('gst_certificate')}
+                          <input
+                            type="file"
+                            accept=".pdf,.png,.jpg,.jpeg"
+                            onChange={(e) => handleFileUpload(e, 'gst_certificate')}
+                            className="hidden"
+                          />
+                        </label>
+                        {getDocFileName('gst_certificate') ? (
+                          <p className="text-[11px] text-slate-500 italic">Uploaded file: {getDocFileName('gst_certificate')}</p>
+                        ) : (
+                          <p className="text-[11px] text-slate-500 italic">Accepted formats: PDF, PNG</p>
+                        )}
+                      </>
                     ) : (
                       <span className="text-xs font-bold text-slate-400">Edits Locked</span>
                     )}
@@ -610,18 +663,25 @@ export default function Apply() {
                     <p className="text-[11px] text-slate-500 font-medium mt-1">Scanned copy of corporate permanent account number card.</p>
                     <div className="mt-2">{getDocStatusBadge('pan_card')}</div>
                   </div>
-                  <div>
+                  <div className="flex flex-col items-end gap-2">
                     {!isLocked ? (
-                      <label className="flex items-center justify-center gap-1.5 px-4 py-2 border border-dashed border-iocl-blue text-iocl-blue hover:bg-iocl-blue/5 rounded-xl cursor-pointer text-xs font-bold transition-colors">
-                        <UploadCloud className="w-4 h-4" />
-                        Upload PDF/PNG
-                        <input
-                          type="file"
-                          accept=".pdf,.png,.jpg,.jpeg"
-                          onChange={(e) => handleFileUpload(e, 'pan_card')}
-                          className="hidden"
-                        />
-                      </label>
+                      <>
+                        <label className="flex items-center justify-center gap-2 px-4 py-2 border border-slate-300 bg-white text-slate-900 hover:bg-slate-100 rounded-xl cursor-pointer text-xs font-bold transition-colors shadow-sm">
+                          <UploadCloud className="w-4 h-4" />
+                          {getUploadButtonLabel('pan_card')}
+                          <input
+                            type="file"
+                            accept=".pdf,.png,.jpg,.jpeg"
+                            onChange={(e) => handleFileUpload(e, 'pan_card')}
+                            className="hidden"
+                          />
+                        </label>
+                        {getDocFileName('pan_card') ? (
+                          <p className="text-[11px] text-slate-500 italic">Uploaded file: {getDocFileName('pan_card')}</p>
+                        ) : (
+                          <p className="text-[11px] text-slate-500 italic">Accepted formats: PDF, PNG</p>
+                        )}
+                      </>
                     ) : (
                       <span className="text-xs font-bold text-slate-400">Edits Locked</span>
                     )}
@@ -642,7 +702,18 @@ export default function Apply() {
               <div className="space-y-6">
                 {/* Corporate Info */}
                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                  <h4 className="font-extrabold text-sm text-iocl-blue uppercase tracking-wider mb-4">Corporate & Legal Information</h4>
+                  <div className="flex items-center justify-between gap-4 mb-4">
+                    <h4 className="font-extrabold text-sm text-iocl-blue uppercase tracking-wider">Corporate & Legal Information</h4>
+                    {!isLocked && (
+                      <button
+                        type="button"
+                        onClick={() => setStep(1)}
+                        className="text-xs font-bold uppercase tracking-[0.24em] text-blue-700 hover:text-blue-900"
+                      >
+                        Edit
+                      </button>
+                    )}
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-6 text-xs font-medium">
                     <div>
                       <p className="text-slate-400 font-bold uppercase tracking-wider">Company Name</p>
@@ -673,17 +744,36 @@ export default function Apply() {
 
                 {/* Logistics Info */}
                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                  <h4 className="font-extrabold text-sm text-iocl-blue uppercase tracking-wider mb-4">Fuel Logistics & Quantities</h4>
+                  <div className="flex items-center justify-between gap-4 mb-4">
+                    <h4 className="font-extrabold text-sm text-iocl-blue uppercase tracking-wider">Fuel Logistics & Quantities</h4>
+                    {!isLocked && (
+                      <button
+                        type="button"
+                        onClick={() => setStep(2)}
+                        className="text-xs font-bold uppercase tracking-[0.24em] text-blue-700 hover:text-blue-900"
+                      >
+                        Edit
+                      </button>
+                    )}
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-6 text-xs font-medium">
                     <div>
                       <p className="text-slate-400 font-bold uppercase tracking-wider">Product Type</p>
                       <p className="text-slate-800 text-sm font-bold mt-0.5">
-                        {formData.productType === 'HSD' ? 'High Speed Diesel (HSD)' : formData.productType === 'LDO' ? 'Light Diesel Oil (LDO)' : 'Bitumen'}
+                        {formData.productType
+                          ? formData.productType === 'HSD'
+                            ? 'High Speed Diesel (HSD)'
+                            : formData.productType === 'LDO'
+                              ? 'Light Diesel Oil (LDO)'
+                              : 'Bitumen'
+                          : 'Not specified'}
                       </p>
                     </div>
                     <div>
                       <p className="text-slate-400 font-bold uppercase tracking-wider">Monthly Required Volume</p>
-                      <p className="text-slate-800 text-sm font-bold mt-0.5">{Number(formData.quantity).toLocaleString()} Litres/MT</p>
+                      <p className="text-slate-800 text-sm font-bold mt-0.5">
+                        {formData.quantity && Number(formData.quantity) > 0 ? `${Number(formData.quantity).toLocaleString()} Litres/MT` : 'Not specified'}
+                      </p>
                     </div>
                     <div>
                       <p className="text-slate-400 font-bold uppercase tracking-wider">Storage Facility Availability</p>
@@ -691,11 +781,11 @@ export default function Apply() {
                     </div>
                     <div>
                       <p className="text-slate-400 font-bold uppercase tracking-wider">Proposed Delivery Location</p>
-                      <p className="text-slate-800 text-sm font-semibold mt-0.5">{formData.location}</p>
+                      <p className="text-slate-800 text-sm font-semibold mt-0.5">{formData.location || 'Not specified'}</p>
                     </div>
                     <div>
                       <p className="text-slate-400 font-bold uppercase tracking-wider">Commencement Date</p>
-                      <p className="text-slate-800 text-sm font-semibold mt-0.5">{formData.requirementStartDate}</p>
+                      <p className="text-slate-800 text-sm font-semibold mt-0.5">{formData.requirementStartDate || 'Not specified'}</p>
                     </div>
                     <div>
                       <p className="text-slate-400 font-bold uppercase tracking-wider">Existing Supplier</p>
@@ -706,7 +796,18 @@ export default function Apply() {
 
                 {/* Uploaded Documents List */}
                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                  <h4 className="font-extrabold text-sm text-iocl-blue uppercase tracking-wider mb-4">Uploaded Compliance Documents</h4>
+                  <div className="flex items-center justify-between gap-4 mb-4">
+                    <h4 className="font-extrabold text-sm text-iocl-blue uppercase tracking-wider">Uploaded Compliance Documents</h4>
+                    {!isLocked && (
+                      <button
+                        type="button"
+                        onClick={() => setStep(3)}
+                        className="text-xs font-bold uppercase tracking-[0.24em] text-blue-700 hover:text-blue-900"
+                      >
+                        Update uploads
+                      </button>
+                    )}
+                  </div>
                   <div className="space-y-3">
                     {['request_letter', 'gst_certificate', 'pan_card'].map((type) => {
                       const doc = uploadedDocs.find(d => d.fileType === type);
@@ -772,7 +873,7 @@ export default function Apply() {
                     className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl text-white font-extrabold text-xs bg-green-600 hover:bg-green-700 shadow-md uppercase tracking-wider transition-all"
                   >
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                    Lock & Submit Application
+                    {submitButtonLabel}
                   </button>
                 )
               )}

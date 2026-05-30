@@ -172,6 +172,8 @@ export default function OfficerDashboard() {
     return matchesSearch && matchesStatus;
   });
 
+  const selectedAppDocs = selectedApp ? documents.filter((d: any) => d.applicationRef === selectedApp._id) : [];
+
   // Calculate quick metrics
   const totalCount = applications.length;
   const submittedCount = applications.filter(a => a.status === 'submitted').length;
@@ -256,180 +258,232 @@ export default function OfficerDashboard() {
           </div>
         </div>
 
-        {/* Workspace Hub splits */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Applications list table */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm lg:col-span-2 overflow-x-auto">
-            <h3 className="text-base font-extrabold text-slate-800 mb-4 uppercase tracking-wider flex items-center gap-2">
-              <ClipboardList className="w-5 h-5 text-iocl-blue" />
-              Onboarding Submissions
-            </h3>
-
-            <table className="w-full text-left border-collapse text-xs font-semibold text-slate-700">
-              <thead>
-                <tr className="border-b border-slate-100 text-slate-400 uppercase tracking-widest text-[9px]">
-                  <th className="py-3 px-2">IOCL ID</th>
-                  <th className="py-3 px-2">Corporate Partner</th>
-                  <th className="py-3 px-2">Fuel Specifications</th>
-                  <th className="py-3 px-2">Verification status</th>
-                  <th className="py-3 px-2 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredApps.length > 0 ? (
-                  filteredApps.map((app) => (
-                    <tr key={app._id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                      <td className="py-4 px-2 font-bold text-slate-800">{app.applicationId}</td>
-                      <td className="py-4 px-2">
-                        <p className="font-bold text-slate-900">{app.companyRef?.companyName || 'Unknown Corp'}</p>
-                        <p className="text-[10px] text-slate-400 font-medium">{app.companyRef?.state} • GST: {app.companyRef?.gst}</p>
-                      </td>
-                      <td className="py-4 px-2">
-                        <p className="font-bold text-slate-800">{app.productType} ({Number(app.quantity).toLocaleString()} L)</p>
-                      </td>
-                      <td className="py-4 px-2">{getStatusBadge(app.status)}</td>
-                      <td className="py-4 px-2 text-right">
-                        <button
-                          onClick={() => handleSelectApp(app)}
-                          className="px-3 py-1.5 bg-slate-900 text-white rounded-lg hover:bg-slate-800 text-[10px] font-bold"
-                        >
-                          Review
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={5} className="py-6 text-center text-slate-400">No applications match criteria</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+        {/* Applications list table */}
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm overflow-x-auto mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+            <div>
+              <h3 className="text-base font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                <ClipboardList className="w-5 h-5 text-iocl-blue" />
+                Onboarding Submissions
+              </h3>
+              <p className="text-[11px] text-slate-500 mt-1">Click Review to open the full application workspace.</p>
+            </div>
           </div>
 
-          {/* Details Review Inspector Panel */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm h-fit">
-            {selectedApp ? (
-              <div className="space-y-6">
-                <div className="flex justify-between items-center pb-4 border-b border-slate-100">
+          <table className="w-full text-left border-collapse text-xs font-semibold text-slate-700">
+            <thead>
+              <tr className="border-b border-slate-100 text-slate-400 uppercase tracking-widest text-[9px]">
+                <th className="py-3 px-2">IOCL ID</th>
+                <th className="py-3 px-2">Corporate Partner</th>
+                <th className="py-3 px-2">Fuel Specifications</th>
+                <th className="py-3 px-2">Verification status</th>
+                <th className="py-3 px-2 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredApps.length > 0 ? (
+                filteredApps.map((app) => (
+                  <tr key={app._id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                    <td className="py-4 px-2 font-bold text-slate-800">{app.applicationId}</td>
+                    <td className="py-4 px-2">
+                      <p className="font-bold text-slate-900">{app.companyRef?.companyName || 'Unknown Corp'}</p>
+                      <p className="text-[10px] text-slate-400 font-medium">{app.companyRef?.state || 'N/A'} • GST: {app.companyRef?.gst || 'N/A'}</p>
+                    </td>
+                    <td className="py-4 px-2">
+                      <p className="font-bold text-slate-800">{app.productType || 'Unknown'} ({Number(app.quantity || 0).toLocaleString()} L)</p>
+                    </td>
+                    <td className="py-4 px-2">{getStatusBadge(app.status)}</td>
+                    <td className="py-4 px-2 text-right">
+                      <button
+                        onClick={() => handleSelectApp(app)}
+                        className="px-3 py-1.5 bg-slate-900 text-white rounded-lg hover:bg-slate-800 text-[10px] font-bold"
+                      >
+                        Review
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="py-6 text-center text-slate-400">No applications match criteria</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {selectedApp && (
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm mb-8">
+            <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4 border-b border-slate-100 pb-6 mb-6">
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs uppercase tracking-[0.2em] text-slate-500">Application Review</span>
+                  {getStatusBadge(selectedApp.status)}
+                </div>
+                <h3 className="text-xl font-extrabold text-slate-900">{selectedApp.applicationId}</h3>
+                <p className="text-sm text-slate-600">{selectedApp.companyRef?.companyName || 'Unknown Corporate Partner'}</p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
+                <div className="rounded-2xl bg-slate-50 px-4 py-3 text-[11px] text-slate-700 font-semibold border border-slate-200">
+                  Assigned Officer: <span className="font-bold text-slate-900">{selectedApp.assignedOfficer?.name || 'Unassigned'}</span>
+                </div>
+                <button
+                  onClick={() => setSelectedApp(null)}
+                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-[11px] font-bold text-slate-700 hover:bg-slate-50"
+                >
+                  Back to Submissions
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
+              <div className="space-y-3 rounded-3xl bg-slate-50 p-5 border border-slate-200">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold">Partner Details</p>
+                <div className="space-y-2 text-sm text-slate-700">
                   <div>
-                    <h3 className="font-extrabold text-sm text-slate-900 uppercase">Review: {selectedApp.applicationId}</h3>
-                    <p className="text-[10px] text-slate-500 font-semibold">{selectedApp.companyRef?.companyName}</p>
+                    <p className="text-slate-500">GST</p>
+                    <p className="font-semibold">{selectedApp.companyRef?.gst || 'N/A'}</p>
                   </div>
-                  <button onClick={() => setSelectedApp(null)} className="text-slate-400 hover:text-slate-600 font-bold">Close</button>
+                  <div>
+                    <p className="text-slate-500">PAN</p>
+                    <p className="font-semibold">{selectedApp.companyRef?.pan || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500">State</p>
+                    <p className="font-semibold">{selectedApp.companyRef?.state || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500">Email</p>
+                    <p className="font-semibold">{selectedApp.companyRef?.email || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500">Phone</p>
+                    <p className="font-semibold">{selectedApp.companyRef?.mobile || 'N/A'}</p>
+                  </div>
                 </div>
+              </div>
 
-                {/* Assignment Dropdown */}
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Assign Sales Officer</label>
-                  <select
-                    value={selectedApp.assignedOfficer?._id || ''}
-                    onChange={(e) => handleAssignOfficer(e.target.value)}
-                    disabled={updating}
-                    className="block w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none text-xs font-semibold text-slate-700 bg-slate-50"
-                  >
-                    <option value="">-- Unassigned (Assign Now) --</option>
-                    {officers.map(o => (
-                      <option key={o._id} value={o._id}>{o.name}</option>
-                    ))}
-                  </select>
+              <div className="space-y-3 rounded-3xl bg-slate-50 p-5 border border-slate-200 xl:col-span-2">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold">Application Summary</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700">
+                  <div>
+                    <p className="text-slate-500">Product</p>
+                    <p className="font-semibold">{selectedApp.productType || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500">Quantity</p>
+                    <p className="font-semibold">{Number(selectedApp.quantity || 0).toLocaleString()} L</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500">Company Type</p>
+                    <p className="font-semibold">{selectedApp.companyRef?.firmType || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500">Submission Date</p>
+                    <p className="font-semibold">{selectedApp.createdAt ? new Date(selectedApp.createdAt).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500">Lead Source</p>
+                    <p className="font-semibold">{selectedApp.leadSource || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500">Current Review Stage</p>
+                    <p className="font-semibold">{selectedApp.status ? selectedApp.status.replace('_', ' ') : 'N/A'}</p>
+                  </div>
                 </div>
+              </div>
+            </div>
 
-                {/* Documents Compliance Checklist */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between gap-3">
                 <div>
-                  <h4 className="text-xs font-extrabold text-slate-800 uppercase mb-3 flex items-center gap-1.5">
-                    <FileText className="w-4 h-4 text-iocl-blue" />
-                    Compliance Checklist
-                  </h4>
-                  <div className="space-y-4">
-                    {documents.filter(d => d.applicationRef === selectedApp._id).map((doc) => (
-                      <div key={doc._id} className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-2.5">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <p className="font-bold text-slate-700 capitalize">{doc.fileType.replace('_', ' ')}</p>
-                            <a
-                              href={doc.fileUrl}
-                              target="_blank"
-                              className="text-[10px] text-iocl-blue font-bold hover:underline flex items-center gap-0.5 mt-0.5"
-                            >
-                              <Download className="w-3 h-3" /> View Scanned Copy
-                            </a>
-                          </div>
-                        </div>
+                  <h4 className="text-sm font-extrabold text-slate-900">Uploaded Documents</h4>
+                  <p className="text-[11px] text-slate-500">Review and verify the scanned uploads for this application.</p>
+                </div>
+              </div>
 
-                        {/* Verify Actions */}
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleDocVerifyChange(doc._id, 'verified')}
-                            className={`px-2 py-1 rounded text-[10px] font-bold flex items-center gap-0.5 border ${docVerifications[doc._id]?.status === 'verified' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-500 border-slate-200'}`}
-                          >
-                            <Check className="w-3 h-3" /> Verify
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDocVerifyChange(doc._id, 'rejected')}
-                            className={`px-2 py-1 rounded text-[10px] font-bold flex items-center gap-0.5 border ${docVerifications[doc._id]?.status === 'rejected' ? 'bg-red-100 text-red-700 border-red-200' : 'bg-white text-slate-500 border-slate-200'}`}
-                          >
-                            <X className="w-3 h-3" /> Reject
-                          </button>
-                        </div>
-
-                        {/* Rejection comment input */}
-                        {docVerifications[doc._id]?.status === 'rejected' && (
-                          <input
-                            type="text"
-                            placeholder="Reason for rejection..."
-                            value={docVerifications[doc._id]?.comment || ''}
-                            onChange={(e) => handleDocCommentChange(doc._id, e.target.value)}
-                            className="block w-full px-2 py-1 border border-red-200 rounded text-[10px] font-semibold focus:outline-none bg-white"
-                          />
-                        )}
+              <div className="space-y-4">
+                {selectedAppDocs.length > 0 ? selectedAppDocs.map((doc) => (
+                  <div key={doc._id} className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 p-4 rounded-3xl border border-slate-200 bg-slate-50">
+                    <div className="space-y-2">
+                      <p className="text-sm font-bold text-slate-900 capitalize">{doc.fileType.replace('_', ' ')}</p>
+                      <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                        <span>Current: {doc.verificationStatus || 'pending'}</span>
+                        <a href={doc.fileUrl} target="_blank" className="text-iocl-blue font-bold hover:underline">View Copy</a>
                       </div>
-                    ))}
+                    </div>
+                    <div className="flex flex-wrap items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleDocVerifyChange(doc._id, 'verified')}
+                        className={`px-3 py-2 rounded-xl text-[10px] font-bold border ${docVerifications[doc._id]?.status === 'verified' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-600 border-slate-200'}`}
+                      >
+                        <Check className="w-3 h-3 inline-block mr-1" /> Verify
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDocVerifyChange(doc._id, 'rejected')}
+                        className={`px-3 py-2 rounded-xl text-[10px] font-bold border ${docVerifications[doc._id]?.status === 'rejected' ? 'bg-red-100 text-red-700 border-red-200' : 'bg-white text-slate-600 border-slate-200'}`}
+                      >
+                        <X className="w-3 h-3 inline-block mr-1" /> Reject
+                      </button>
+                    </div>
+                    {docVerifications[doc._id]?.status === 'rejected' && (
+                      <div className="md:col-span-2">
+                        <input
+                          type="text"
+                          placeholder="Reason for rejection..."
+                          value={docVerifications[doc._id]?.comment || ''}
+                          onChange={(e) => handleDocCommentChange(doc._id, e.target.value)}
+                          className="block w-full px-3 py-2 border border-red-200 rounded-xl text-xs font-semibold focus:outline-none bg-white"
+                        />
+                      </div>
+                    )}
                   </div>
-                </div>
+                )) : (
+                  <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">No documents were uploaded for this application.</div>
+                )}
+              </div>
+            </div>
 
-                {/* Remark logger */}
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Add Comment / Remark for Partner</label>
-                  <textarea
-                    rows={2}
-                    value={remarkText}
-                    onChange={(e) => setRemarkText(e.target.value)}
-                    placeholder="Provide audit feedback or instructions..."
-                    className="block w-full p-2.5 border border-slate-200 rounded-xl focus:outline-none text-xs font-semibold text-slate-700 bg-slate-50"
-                  />
-                </div>
+            <div className="mt-6 grid gap-6 xl:grid-cols-[1.4fr_0.6fr]">
+              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 space-y-3">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold">Officer Remarks</p>
+                <textarea
+                  rows={4}
+                  value={remarkText}
+                  onChange={(e) => setRemarkText(e.target.value)}
+                  placeholder="Provide audit feedback or instructions..."
+                  className="block w-full resize-none rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 focus:outline-none"
+                />
+              </div>
 
-                {/* Action Buttons */}
-                <div className="pt-4 border-t border-slate-100 flex flex-wrap gap-2 justify-end">
+              <div className="rounded-3xl border border-slate-200 bg-white p-5 flex flex-col justify-between gap-4">
+                <div className="space-y-2">
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold">Review actions</p>
+                  <p className="text-sm text-slate-600">Update application status and submit your decision.</p>
+                </div>
+                <div className="grid gap-3">
                   <button
                     onClick={() => handleUpdateWorkflow('correction_required')}
                     disabled={updating}
-                    className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold shadow-sm"
+                    className="w-full rounded-2xl bg-amber-500 px-4 py-3 text-sm font-bold text-white hover:bg-amber-600"
                   >
                     Request Corrections
                   </button>
                   <button
                     onClick={() => handleUpdateWorkflow('approved')}
                     disabled={updating}
-                    className="px-3.5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold shadow-sm"
+                    className="w-full rounded-2xl bg-green-600 px-4 py-3 text-sm font-bold text-white hover:bg-green-700"
                   >
                     Approve Deal
                   </button>
                 </div>
               </div>
-            ) : (
-              <div className="text-center py-10 text-slate-400 space-y-3 font-semibold">
-                <ClipboardList className="w-10 h-10 mx-auto text-slate-300 animate-bounce" />
-                <p className="text-xs">Select any onboarding application to inspect documents and process workflows.</p>
-              </div>
-            )}
+            </div>
           </div>
-
-        </div>
+        )}
       </main>
 
       <Footer />

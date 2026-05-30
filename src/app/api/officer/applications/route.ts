@@ -119,6 +119,8 @@ export async function POST(req: Request) {
     }
 
     // 5. Audit Log Action
+    const companyRef = application.companyRef as any;
+
     await ActivityLog.create({
       action: status ? `Workflow Update: ${status}` : 'Update Application Details',
       actor: session.user.id,
@@ -126,7 +128,7 @@ export async function POST(req: Request) {
       actorRole: session.user.role,
       metadata: {
         applicationId: application.applicationId,
-        companyName: application.companyRef?.companyName,
+        companyName: companyRef?.companyName,
         status,
         remark: remarkText
       }

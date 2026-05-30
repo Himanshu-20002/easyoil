@@ -12,12 +12,12 @@ const ApplicationSchema = new Schema(
   {
     applicationId: { type: String, required: true, unique: true, index: true }, // e.g. IOCL-2026-10001
     companyRef: { type: Schema.Types.ObjectId, ref: 'Company', required: true },
-    productType: { type: String, enum: ['LDO', 'HSD', 'Bitumen'], required: true },
-    quantity: { type: Number, required: true },
-    location: { type: String, required: true },
+    productType: { type: String, enum: ['LDO', 'HSD', 'Bitumen'], required: false },
+    quantity: { type: Number, required: false },
+    location: { type: String, required: false },
     storageAvailability: { type: Boolean, default: false },
     existingSupplier: { type: String, default: '' },
-    requirementStartDate: { type: Date, required: true },
+    requirementStartDate: { type: Date, required: false },
     leadSource: { type: String, default: '' },
     status: { 
       type: String, 
@@ -31,4 +31,8 @@ const ApplicationSchema = new Schema(
   { timestamps: true }
 );
 
-export const Application = models.Application || model('Application', ApplicationSchema);
+if (models.Application) {
+  delete models.Application;
+}
+
+export const Application = model('Application', ApplicationSchema);

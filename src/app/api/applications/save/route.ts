@@ -81,7 +81,7 @@ export async function POST(req: Request) {
 
     // 3. Update logistics details
     application.productType = productType || application.productType;
-    application.quantity = quantity !== undefined ? Number(quantity) : application.quantity;
+    application.quantity = quantity !== undefined && quantity !== '' ? Number(quantity) : application.quantity;
     application.location = location || application.location;
     application.storageAvailability = storageAvailability !== undefined ? Boolean(storageAvailability) : application.storageAvailability;
     application.existingSupplier = existingSupplier || application.existingSupplier;
