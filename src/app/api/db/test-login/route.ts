@@ -7,14 +7,14 @@ import { Company } from '../../../../models/Company';
 export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
-    
+
     if (!email || !password) {
       return NextResponse.json({ success: false, message: 'Email and password required' });
     }
 
     console.log('--- Diagnostic Test Login Start ---');
     console.log('Testing Email:', email);
-    
+
     await dbConnect();
     console.log('Database connected successfully');
 

@@ -17,6 +17,7 @@ function LoginForm() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [seeding, setSeeding] = useState(false);
 
   // Handle seed success info or next auth error params
   useEffect(() => {
@@ -27,6 +28,22 @@ function LoginForm() {
       setError('An error occurred during authentication.');
     }
   }, [searchParams]);
+
+  const triggerSeed = async () => {
+    setSeeding(true);
+    setError('');
+    setSuccess('');
+    try {
+      const res = await fetch('/api/db/seed', { method: 'POST' });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Seeding failed');
+      setSuccess('Database seeded successfully!');
+    } catch (err: any) {
+      setError(err.message || 'Seeding error');
+    } finally {
+      setSeeding(false);
+    }
+  };
 
   const performLogin = async (emailStr: string, passwordStr: string) => {
     setLoading(true);
@@ -223,8 +240,17 @@ function LoginForm() {
                     Customer: customerC@chromapolymers.com
                   </button>
                 </div>
-                <p className="text-[10px] text-slate-500 font-semibold italic mt-1.5">
-                  * Note: Password for seeded accounts is <strong className="text-slate-400">iocl1234</strong>. Trigger <Link href="/api/db/seed" target="_blank" className="underline text-iocl-blue hover:text-white">seeding first</Link> if database is empty!
+                <p className="text-[10px] text-slate-500 font-semibold italic mt-1.5 flex items-center gap-1">
+                  * Note: Password for seeded accounts is <strong className="text-slate-400">iocl1234</strong>. Trigger 
+                  <button 
+                    type="button" 
+                    onClick={triggerSeed} 
+                    disabled={seeding}
+                    className="underline text-iocl-blue hover:text-white font-bold cursor-pointer disabled:opacity-50"
+                  >
+                    {seeding ? 'seeding...' : 'seeding first'}
+                  </button> 
+                  if database is empty!
                 </p>
               </div>
             </div>

@@ -37,7 +37,7 @@ export default function AdminDashboard() {
   const triggerSeed = async () => {
     setSeeding(true);
     try {
-      const res = await fetch('/api/db/seed');
+      const res = await fetch('/api/db/seed', { method: 'POST' });
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || 'Seeding failed');
       alert(json.message);
