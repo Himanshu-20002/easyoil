@@ -5,14 +5,17 @@ import { Application } from '../models/Application';
 import { Document } from '../models/Document';
 import { ActivityLog } from '../models/ActivityLog';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI || process.env.NEXT_PUBLIC_MONGODB_URI;
 
 if (!MONGODB_URI) {
   const env = process.env.NODE_ENV || 'development';
   if (env === 'production') {
     throw new Error('MONGODB_URI environment variable must be set in production. Check Vercel environment variables.');
   }
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
+  // In development, provide a helpful error message with instructions
+  console.error('[MongoDB] MONGODB_URI environment variable is not set.');
+  console.error('[MongoDB] Please ensure MONGODB_URI is configured in your Vercel project settings or .env.local file.');
+  throw new Error('Please define the MONGODB_URI environment variable');
 }
 
 /**
