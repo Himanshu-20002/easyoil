@@ -37,7 +37,7 @@ export const authConfig: NextAuthConfig = {
         '/_next',
         '/api/auth',
         '/api/register',
-        '/api/db/seed',
+        '/api/db/',
         '/favicon.ico',
         '/uploads'
       ];
