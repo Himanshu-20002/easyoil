@@ -73,6 +73,8 @@ export async function dbConnect() {
     }
     try {
       cached.conn = await cached.promise;
+      // Ensure Mongoose indexes are created so unique constraints are enforced.
+      await Promise.all(Object.values(_models).map(async (model) => model.init()));
       break; // exit loop on success
     } catch (e) {
       cached.promise = null; // reset promise for retry

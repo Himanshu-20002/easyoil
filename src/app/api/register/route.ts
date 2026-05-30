@@ -132,9 +132,9 @@ export async function POST(req: Request) {
       }
     }
 
-    // Check if email already exists
+    // Check if email already exists (case-insensitive)
     console.log('[REGISTER-CHECK] Looking for existing user with email:', email);
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    const existingUser = await User.findOne({ email: email.toLowerCase() }).collation({ locale: 'en', strength: 2 });
     if (existingUser) {
       console.log('[REGISTER-DUPLICATE] Email already registered:', email);
       return NextResponse.json(

@@ -16,7 +16,7 @@ const CompanySchema = new Schema(
     pincode: { type: String, required: true },
     contactPerson: { type: String, required: true },
     mobile: { type: String, required: true },
-    email: { type: String, required: true }
+    email: { type: String, required: true, lowercase: true, trim: true }
   },
   { timestamps: true }
 );
