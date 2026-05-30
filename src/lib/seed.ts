@@ -83,10 +83,10 @@ export async function seedDatabase() {
   );
 
   const customerA = await User.findOneAndUpdate(
-    { email: 'customerA@apexind.com' },
+    { email: 'customera@apexind.com' },
     {
       name: 'Suresh Patil',
-      email: 'customerA@apexind.com',
+      email: 'customera@apexind.com',
       mobile: '9988776655',
       role: 'customer',
       password: hashedPassword,
@@ -160,10 +160,10 @@ export async function seedDatabase() {
   );
 
   await User.findOneAndUpdate(
-    { email: 'customerB@bhartialogistics.com' },
+    { email: 'customerb@bhartialogistics.com' },
     {
       name: 'Ramesh Bhartia',
-      email: 'customerB@bhartialogistics.com',
+      email: 'customerb@bhartialogistics.com',
       mobile: '9988776656',
       role: 'customer',
       password: hashedPassword,
@@ -235,10 +235,10 @@ export async function seedDatabase() {
   );
 
   await User.findOneAndUpdate(
-    { email: 'customerC@chromapolymers.com' },
+    { email: 'customerc@chromapolymers.com' },
     {
       name: 'Mehta Shah',
-      email: 'customerC@chromapolymers.com',
+      email: 'customerc@chromapolymers.com',
       mobile: '9988776657',
       role: 'customer',
       password: hashedPassword,
@@ -320,10 +320,10 @@ export async function seedDatabase() {
   );
 
   await User.findOneAndUpdate(
-    { email: 'customerD@deltaeng.com' },
+    { email: 'customerd@deltaeng.com' },
     {
       name: 'Gurpreet Singh',
-      email: 'customerD@deltaeng.com',
+      email: 'customerd@deltaeng.com',
       mobile: '9988776658',
       role: 'customer',
       password: hashedPassword,
@@ -381,10 +381,10 @@ export async function seedDatabase() {
   );
 
   await User.findOneAndUpdate(
-    { email: 'customerE@ecogreen.com' },
+    { email: 'customere@ecogreen.com' },
     {
       name: 'Srinivasan Iyer',
-      email: 'customerE@ecogreen.com',
+      email: 'customere@ecogreen.com',
       mobile: '9988776659',
       role: 'customer',
       password: hashedPassword,
