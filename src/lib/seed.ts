@@ -22,75 +22,100 @@ export async function seedDatabase() {
   const hashedPassword = await bcrypt.hash('iocl1234', 10);
 
   // 3. Create Users (Admin & Sales Officers)
-  const admin = await User.create({
-    name: 'EasyOil Chief Administrator',
-    email: 'admin@easyoil.in',
-    mobile: '9876543210',
-    role: 'admin',
-    password: hashedPassword,
-    isActive: true
-  });
+  const admin = await User.findOneAndUpdate(
+    { email: 'admin@easyoil.in' },
+    {
+      name: 'EasyOil Chief Administrator',
+      email: 'admin@easyoil.in',
+      mobile: '9876543210',
+      role: 'admin',
+      password: hashedPassword,
+      isActive: true
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  const officer1 = await User.create({
-    name: 'Rajesh Kumar (Sales Officer)',
-    email: 'officer1@easyoil.in',
-    mobile: '9876543211',
-    role: 'sales_officer',
-    password: hashedPassword,
-    isActive: true
-  });
+  const officer1 = await User.findOneAndUpdate(
+    { email: 'officer1@easyoil.in' },
+    {
+      name: 'Rajesh Kumar (Sales Officer)',
+      email: 'officer1@easyoil.in',
+      mobile: '9876543211',
+      role: 'sales_officer',
+      password: hashedPassword,
+      isActive: true
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  const officer2 = await User.create({
-    name: 'Anjali Sharma (Sales Officer)',
-    email: 'officer2@easyoil.in',
-    mobile: '9876543212',
-    role: 'sales_officer',
-    password: hashedPassword,
-    isActive: true
-  });
+  const officer2 = await User.findOneAndUpdate(
+    { email: 'officer2@easyoil.in' },
+    {
+      name: 'Anjali Sharma (Sales Officer)',
+      email: 'officer2@easyoil.in',
+      mobile: '9876543212',
+      role: 'sales_officer',
+      password: hashedPassword,
+      isActive: true
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
   // 4. Create Mock Companies & Applications in various states
   
   // Company A - Approved state
-  const companyA = await Company.create({
-    companyName: 'Apex Industrial Fuels Ltd',
-    firmType: 'Private Limited',
-    gst: '27AAAAA1111A1Z1',
-    pan: 'AAAAA1111A',
-    address: 'Plot 42, MIDC Industrial Area, Andheri East',
-    district: 'Mumbai',
-    state: 'Maharashtra',
-    pincode: '400093',
-    contactPerson: 'Suresh Patil',
-    mobile: '9988776655',
-    email: 'suresh@apexind.com'
-  });
+  const companyA = await Company.findOneAndUpdate(
+    { gst: '27AAAAA1111A1Z1' },
+    {
+      companyName: 'Apex Industrial Fuels Ltd',
+      firmType: 'Private Limited',
+      gst: '27AAAAA1111A1Z1',
+      pan: 'AAAAA1111A',
+      address: 'Plot 42, MIDC Industrial Area, Andheri East',
+      district: 'Mumbai',
+      state: 'Maharashtra',
+      pincode: '400093',
+      contactPerson: 'Suresh Patil',
+      mobile: '9988776655',
+      email: 'suresh@apexind.com'
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  const customerA = await User.create({
-    name: 'Suresh Patil',
-    email: 'customerA@apexind.com',
-    mobile: '9988776655',
-    role: 'customer',
-    password: hashedPassword,
-    companyRef: companyA._id,
-    isActive: true
-  });
+  const customerA = await User.findOneAndUpdate(
+    { email: 'customerA@apexind.com' },
+    {
+      name: 'Suresh Patil',
+      email: 'customerA@apexind.com',
+      mobile: '9988776655',
+      role: 'customer',
+      password: hashedPassword,
+      companyRef: companyA._id,
+      isActive: true
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  const applicationA = await Application.create({
-    applicationId: 'IOCL-2026-10001',
-    companyRef: companyA._id,
-    productType: 'HSD',
-    quantity: 12000,
-    location: 'Nagpur Depot Storage',
-    storageAvailability: true,
-    existingSupplier: 'HPCL',
-    requirementStartDate: new Date('2026-06-01'),
-    leadSource: 'Reference',
-    status: 'approved',
-    assignedOfficer: officer1._id
-  });
+  const applicationA = await Application.findOneAndUpdate(
+    { applicationId: 'IOCL-2026-10001' },
+    {
+      applicationId: 'IOCL-2026-10001',
+      companyRef: companyA._id,
+      productType: 'HSD',
+      quantity: 12000,
+      location: 'Nagpur Depot Storage',
+      storageAvailability: true,
+      existingSupplier: 'HPCL',
+      requirementStartDate: new Date('2026-06-01'),
+      leadSource: 'Reference',
+      status: 'approved',
+      assignedOfficer: officer1._id
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  await Document.create([
+  await Document.findOneAndUpdate(
+    { applicationRef: applicationA._id, fileType: 'request_letter' },
     {
       applicationRef: applicationA._id,
       fileType: 'request_letter',
@@ -99,6 +124,11 @@ export async function seedDatabase() {
       verificationStatus: 'verified',
       comments: 'Duly signed and stamped.'
     },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
+
+  await Document.findOneAndUpdate(
+    { applicationRef: applicationA._id, fileType: 'gst_certificate' },
     {
       applicationRef: applicationA._id,
       fileType: 'gst_certificate',
@@ -106,48 +136,62 @@ export async function seedDatabase() {
       fileUrl: '/uploads/mock/gst_cert_apex.pdf',
       verificationStatus: 'verified',
       comments: 'Verified against government portal.'
-    }
-  ]);
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
   // Company B - Under Review state
-  const companyB = await Company.create({
-    companyName: 'Bhartia Logistics Pvt Ltd',
-    firmType: 'Private Limited',
-    gst: '07BBBBB2222B2Z2',
-    pan: 'BBBBB2222B',
-    address: 'F-12, Okhla Phase 3',
-    district: 'New Delhi',
-    state: 'Delhi',
-    pincode: '110020',
-    contactPerson: 'Ramesh Bhartia',
-    mobile: '9988776656',
-    email: 'ramesh@bhartialogistics.com'
-  });
+  const companyB = await Company.findOneAndUpdate(
+    { gst: '07BBBBB2222B2Z2' },
+    {
+      companyName: 'Bhartia Logistics Pvt Ltd',
+      firmType: 'Private Limited',
+      gst: '07BBBBB2222B2Z2',
+      pan: 'BBBBB2222B',
+      address: 'F-12, Okhla Phase 3',
+      district: 'New Delhi',
+      state: 'Delhi',
+      pincode: '110020',
+      contactPerson: 'Ramesh Bhartia',
+      mobile: '9988776656',
+      email: 'ramesh@bhartialogistics.com'
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  await User.create({
-    name: 'Ramesh Bhartia',
-    email: 'customerB@bhartialogistics.com',
-    mobile: '9988776656',
-    role: 'customer',
-    password: hashedPassword,
-    companyRef: companyB._id,
-    isActive: true
-  });
+  await User.findOneAndUpdate(
+    { email: 'customerB@bhartialogistics.com' },
+    {
+      name: 'Ramesh Bhartia',
+      email: 'customerB@bhartialogistics.com',
+      mobile: '9988776656',
+      role: 'customer',
+      password: hashedPassword,
+      companyRef: companyB._id,
+      isActive: true
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  const applicationB = await Application.create({
-    applicationId: 'IOCL-2026-10002',
-    companyRef: companyB._id,
-    productType: 'LDO',
-    quantity: 8000,
-    location: 'Okhla Yard',
-    storageAvailability: true,
-    existingSupplier: '',
-    requirementStartDate: new Date('2026-07-01'),
-    status: 'under_review',
-    assignedOfficer: officer1._id
-  });
+  const applicationB = await Application.findOneAndUpdate(
+    { applicationId: 'IOCL-2026-10002' },
+    {
+      applicationId: 'IOCL-2026-10002',
+      companyRef: companyB._id,
+      productType: 'LDO',
+      quantity: 8000,
+      location: 'Okhla Yard',
+      storageAvailability: true,
+      existingSupplier: '',
+      requirementStartDate: new Date('2026-07-01'),
+      status: 'under_review',
+      assignedOfficer: officer1._id
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  await Document.create([
+  await Document.findOneAndUpdate(
+    { applicationRef: applicationB._id, fileType: 'request_letter' },
     {
       applicationRef: applicationB._id,
       fileType: 'request_letter',
@@ -156,63 +200,82 @@ export async function seedDatabase() {
       verificationStatus: 'verified',
       comments: 'Looks correct.'
     },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
+
+  await Document.findOneAndUpdate(
+    { applicationRef: applicationB._id, fileType: 'gst_certificate' },
     {
       applicationRef: applicationB._id,
       fileType: 'gst_certificate',
       fileName: 'gst_bhartia.png',
       fileUrl: '/uploads/mock/gst_bhartia.png',
       verificationStatus: 'pending'
-    }
-  ]);
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
   // Company C - Correction Required state
-  const companyC = await Company.create({
-    companyName: 'Chroma Polymers LLP',
-    firmType: 'LLP',
-    gst: '24CCCCC3333C3Z3',
-    pan: 'CCCCC3333C',
-    address: 'GIDC Sector 5, Gandhinagar',
-    district: 'Gandhinagar',
-    state: 'Gujarat',
-    pincode: '382010',
-    contactPerson: 'Mehta Shah',
-    mobile: '9988776657',
-    email: 'mehta@chromapolymers.com'
-  });
+  const companyC = await Company.findOneAndUpdate(
+    { gst: '24CCCCC3333C3Z3' },
+    {
+      companyName: 'Chroma Polymers LLP',
+      firmType: 'LLP',
+      gst: '24CCCCC3333C3Z3',
+      pan: 'CCCCC3333C',
+      address: 'GIDC Sector 5, Gandhinagar',
+      district: 'Gandhinagar',
+      state: 'Gujarat',
+      pincode: '382010',
+      contactPerson: 'Mehta Shah',
+      mobile: '9988776657',
+      email: 'mehta@chromapolymers.com'
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  await User.create({
-    name: 'Mehta Shah',
-    email: 'customerC@chromapolymers.com',
-    mobile: '9988776657',
-    role: 'customer',
-    password: hashedPassword,
-    companyRef: companyC._id,
-    isActive: true
-  });
+  await User.findOneAndUpdate(
+    { email: 'customerC@chromapolymers.com' },
+    {
+      name: 'Mehta Shah',
+      email: 'customerC@chromapolymers.com',
+      mobile: '9988776657',
+      role: 'customer',
+      password: hashedPassword,
+      companyRef: companyC._id,
+      isActive: true
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  const applicationC = await Application.create({
-    applicationId: 'IOCL-2026-10003',
-    companyRef: companyC._id,
-    productType: 'Bitumen',
-    quantity: 25000,
-    location: 'Vadodara Plant',
-    storageAvailability: false,
-    existingSupplier: 'BPCL',
-    requirementStartDate: new Date('2026-08-15'),
-    status: 'correction_required',
-    assignedOfficer: officer2._id,
-    remarks: [
-      {
-        author: officer2._id,
-        authorName: 'Anjali Sharma (Sales Officer)',
-        authorRole: 'sales_officer',
-        text: 'The PAN Card uploaded is blurred. Please upload a clear scanned copy of your PAN card to proceed.',
-        createdAt: new Date()
-      }
-    ]
-  });
+  const applicationC = await Application.findOneAndUpdate(
+    { applicationId: 'IOCL-2026-10003' },
+    {
+      applicationId: 'IOCL-2026-10003',
+      companyRef: companyC._id,
+      productType: 'Bitumen',
+      quantity: 25000,
+      location: 'Vadodara Plant',
+      storageAvailability: false,
+      existingSupplier: 'BPCL',
+      requirementStartDate: new Date('2026-08-15'),
+      status: 'correction_required',
+      assignedOfficer: officer2._id,
+      remarks: [
+        {
+          author: officer2._id,
+          authorName: 'Anjali Sharma (Sales Officer)',
+          authorRole: 'sales_officer',
+          text: 'The PAN Card uploaded is blurred. Please upload a clear scanned copy of your PAN card to proceed.',
+          createdAt: new Date()
+        }
+      ]
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  await Document.create([
+  await Document.findOneAndUpdate(
+    { applicationRef: applicationC._id, fileType: 'request_letter' },
     {
       applicationRef: applicationC._id,
       fileType: 'request_letter',
@@ -221,6 +284,11 @@ export async function seedDatabase() {
       verificationStatus: 'verified',
       comments: 'Okay'
     },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
+
+  await Document.findOneAndUpdate(
+    { applicationRef: applicationC._id, fileType: 'pan_card' },
     {
       applicationRef: applicationC._id,
       fileType: 'pan_card',
@@ -228,91 +296,118 @@ export async function seedDatabase() {
       fileUrl: '/uploads/mock/pan_blurry.jpg',
       verificationStatus: 'rejected',
       comments: 'Too blurry. Please re-upload.'
-    }
-  ]);
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
   // Company D - Submitted state
-  const companyD = await Company.create({
-    companyName: 'Delta Engineering Works',
-    firmType: 'Proprietorship',
-    gst: '03DDDDD4444D4Z4',
-    pan: 'DDDDD4444D',
-    address: 'Industrial Area Phase 2, Ludhiana',
-    district: 'Ludhiana',
-    state: 'Punjab',
-    pincode: '141003',
-    contactPerson: 'Gurpreet Singh',
-    mobile: '9988776658',
-    email: 'gurpreet@deltaeng.com'
-  });
+  const companyD = await Company.findOneAndUpdate(
+    { gst: '03DDDDD4444D4Z4' },
+    {
+      companyName: 'Delta Engineering Works',
+      firmType: 'Proprietorship',
+      gst: '03DDDDD4444D4Z4',
+      pan: 'DDDDD4444D',
+      address: 'Industrial Area Phase 2, Ludhiana',
+      district: 'Ludhiana',
+      state: 'Punjab',
+      pincode: '141003',
+      contactPerson: 'Gurpreet Singh',
+      mobile: '9988776658',
+      email: 'gurpreet@deltaeng.com'
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  await User.create({
-    name: 'Gurpreet Singh',
-    email: 'customerD@deltaeng.com',
-    mobile: '9988776658',
-    role: 'customer',
-    password: hashedPassword,
-    companyRef: companyD._id,
-    isActive: true
-  });
+  await User.findOneAndUpdate(
+    { email: 'customerD@deltaeng.com' },
+    {
+      name: 'Gurpreet Singh',
+      email: 'customerD@deltaeng.com',
+      mobile: '9988776658',
+      role: 'customer',
+      password: hashedPassword,
+      companyRef: companyD._id,
+      isActive: true
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  const applicationD = await Application.create({
-    applicationId: 'IOCL-2026-10004',
-    companyRef: companyD._id,
-    productType: 'HSD',
-    quantity: 15000,
-    location: 'Ludhiana Yard',
-    storageAvailability: true,
-    requirementStartDate: new Date('2026-06-10'),
-    status: 'submitted',
-    assignedOfficer: null // Unassigned, admin can assign
-  });
+  const applicationD = await Application.findOneAndUpdate(
+    { applicationId: 'IOCL-2026-10004' },
+    {
+      applicationId: 'IOCL-2026-10004',
+      companyRef: companyD._id,
+      productType: 'HSD',
+      quantity: 15000,
+      location: 'Ludhiana Yard',
+      storageAvailability: true,
+      requirementStartDate: new Date('2026-06-10'),
+      status: 'submitted',
+      assignedOfficer: null // Unassigned, admin can assign
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  await Document.create([
+  await Document.findOneAndUpdate(
+    { applicationRef: applicationD._id, fileType: 'gst_certificate' },
     {
       applicationRef: applicationD._id,
       fileType: 'gst_certificate',
       fileName: 'gst_delta.pdf',
       fileUrl: '/uploads/mock/gst_delta.pdf',
       verificationStatus: 'pending'
-    }
-  ]);
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
   // Company E - Draft state
-  const companyE = await Company.create({
-    companyName: 'Eco-Green Synthetics Ltd',
-    firmType: 'Private Limited',
-    gst: '33EEEEE5555E5Z5',
-    pan: 'EEEEE5555E',
-    address: 'SIPCOT Industrial Park',
-    district: 'Kanchipuram',
-    state: 'Tamil Nadu',
-    pincode: '602105',
-    contactPerson: 'Srinivasan Iyer',
-    mobile: '9988776659',
-    email: 'srini@ecogreen.com'
-  });
+  const companyE = await Company.findOneAndUpdate(
+    { gst: '33EEEEE5555E5Z5' },
+    {
+      companyName: 'Eco-Green Synthetics Ltd',
+      firmType: 'Private Limited',
+      gst: '33EEEEE5555E5Z5',
+      pan: 'EEEEE5555E',
+      address: 'SIPCOT Industrial Park',
+      district: 'Kanchipuram',
+      state: 'Tamil Nadu',
+      pincode: '602105',
+      contactPerson: 'Srinivasan Iyer',
+      mobile: '9988776659',
+      email: 'srini@ecogreen.com'
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  await User.create({
-    name: 'Srinivasan Iyer',
-    email: 'customerE@ecogreen.com',
-    mobile: '9988776659',
-    role: 'customer',
-    password: hashedPassword,
-    companyRef: companyE._id,
-    isActive: true
-  });
+  await User.findOneAndUpdate(
+    { email: 'customerE@ecogreen.com' },
+    {
+      name: 'Srinivasan Iyer',
+      email: 'customerE@ecogreen.com',
+      mobile: '9988776659',
+      role: 'customer',
+      password: hashedPassword,
+      companyRef: companyE._id,
+      isActive: true
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  await Application.create({
-    applicationId: 'IOCL-2026-10005',
-    companyRef: companyE._id,
-    productType: 'LDO',
-    quantity: 5000,
-    location: 'Kanchipuram Storage Depot',
-    storageAvailability: false,
-    requirementStartDate: new Date('2026-09-01'),
-    status: 'draft'
-  });
+  await Application.findOneAndUpdate(
+    { applicationId: 'IOCL-2026-10005' },
+    {
+      applicationId: 'IOCL-2026-10005',
+      companyRef: companyE._id,
+      productType: 'LDO',
+      quantity: 5000,
+      location: 'Kanchipuram Storage Depot',
+      storageAvailability: false,
+      requirementStartDate: new Date('2026-09-01'),
+      status: 'draft'
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
   // 5. Create Activity Logs
   await ActivityLog.create([
