@@ -1,36 +1,142 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ⛽ EasyOil – Bulk Fuel Management Platform
 
-## Getting Started
+EasyOil is a modern enterprise web application built to simplify bulk fuel procurement, customer onboarding, and account management. The platform provides businesses with an intuitive dashboard to manage fuel orders, customer accounts, and operational workflows efficiently.
 
-First, run the development server:
+## 🚀 Live Demo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+https://your-demo-url.vercel.app
+
+## ✨ Features
+
+- Secure Authentication
+- Customer Onboarding
+- Bulk Fuel Ordering
+- Responsive Dashboard
+- Order Management
+- Account Management
+- Admin Dashboard
+- User Profile Management
+- REST API Integration
+- Mobile Responsive Design
+- Fast Performance
+- Modern UI/UX
+
+## 📸 Screenshots
+
+- Dashboard
+- Customer Portal
+- Bulk Fuel Landing Page
+- Order Management
+- Authentication
+- Mobile View
+
+## 🛠 Tech Stack
+
+### Frontend
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+
+### Backend
+- Node.js
+- Express.js
+- REST APIs
+
+### Database
+- MongoDB
+
+### Authentication
+- JWT Authentication
+
+### Deployment
+- Vercel
+
+## 📂 Project Structure
+
+```
+EasyOil/
+│
+├── app/
+├── components/
+├── lib/
+├── hooks/
+├── services/
+├── public/
+├── styles/
+├── utils/
+└── README.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔑 Core Modules
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Customer Management
+- Customer Registration
+- Profile Management
+- Account Dashboard
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Fuel Ordering
+- Place Bulk Orders
+- Track Order Status
+- Order History
 
-## Learn More
+### Dashboard
+- Customer Overview
+- Fuel Statistics
+- Activity Monitoring
 
-To learn more about Next.js, take a look at the following resources:
+### Authentication
+- Login
+- Registration
+- JWT Authorization
+- Protected Routes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎯 Objectives
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Simplify bulk fuel procurement
+- Improve customer onboarding
+- Reduce operational overhead
+- Provide an intuitive dashboard experience
+- Deliver fast and secure user interactions
 
-## Deploy on Vercel
+## ⚡ Performance
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Optimized Next.js Application
+- Responsive Design
+- SEO Friendly
+- Lazy Loading
+- Optimized Assets
+- Fast Navigation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🔒 Security
+
+- JWT Authentication
+- Protected Routes
+- Input Validation
+- Secure API Communication
+
+## 📱 Responsive
+
+Designed for
+
+- Desktop
+- Tablet
+- Mobile
+
+## Future Improvements
+
+- Payment Gateway
+- Notifications
+- Analytics Dashboard
+- Invoice Generation
+- Multi-user Roles
+- Real-time Order Tracking
+
+## 👨‍💻 Developed By
+
+**Himanshu Kumar**
+
+Full Stack Developer
+
+**Tech Stack**
+Next.js • React • TypeScript • Node.js • MongoDB • Tailwind CSS
